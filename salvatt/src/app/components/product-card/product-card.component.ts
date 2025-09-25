@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { Product } from '../../models/product';
 
 @Component({
@@ -8,13 +8,11 @@ import { Product } from '../../models/product';
   template: `
     <div class="product-card">
       <img
-        [src]="product().imageUrl"
-        [alt]="product().name"
-        width="200"
-        height="200"
+        [src]="product?.imageUrl"
+        [alt]="product?.name"
       />
-      <h3>{{ product().name }}</h3>
-      <p>{{ product().description }}</p>
+      <h3>{{ product?.name }}</h3>
+      <p>{{ product?.description }}</p>
     </div>
   `,
   styles: [`
@@ -24,8 +22,13 @@ import { Product } from '../../models/product';
       margin: 1rem;
       text-align: center;
     }
+    .product-card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
   `],
 })
 export class ProductCardComponent {
-  product = input.required<Product>();
+  @Input() product?: Product;
 }
