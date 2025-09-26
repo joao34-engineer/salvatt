@@ -1,0 +1,3 @@
+
+  globalThis.Event = globalThis.DenoEvent
+  

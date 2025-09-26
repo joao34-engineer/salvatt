@@ -1,13 +1,13 @@
 import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
 import { ProductCardComponent } from './components/product-card/product-card.component';
+import { HeaderComponent } from './components/header/header.component';
 import { Product } from './models/product';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, ProductCardComponent, FormsModule, CommonModule],
+  imports: [RouterOutlet, ProductCardComponent, HeaderComponent, FormsModule],
   templateUrl: './app.html',
   styleUrls: ['./app.css']
 })
@@ -38,6 +38,10 @@ export class App {
         name: 'Lingerie Item',
         description: this.tempDescription,
         imageUrl: this.tempImageUrl(),
+        price: 89.90,
+        inStock: true,
+        sizes: ['P', 'M', 'G', 'GG'],
+        colors: ['#FF69B4', '#8B008B', '#000000', '#FFFFFF']
       };
       this.products.update(products => [...products, newProduct]);
       this.tempImageUrl.set('');

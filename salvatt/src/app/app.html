@@ -1,18 +1,92 @@
-<div>
-  <h1>{{ title() }}</h1>
+<!-- Header -->
+<app-header></app-header>
 
-  <div class="upload-form">
-    <h2>Add Lingerie Item</h2>
-    <input type="file" (change)="onFileSelected($event)" accept="image/*">
-    <textarea [(ngModel)]="tempDescription" placeholder="Enter description"></textarea>
-    <button (click)="addProduct()">Add Product</button>
-  </div>
+<!-- Main Content -->
+<main class="main-content">
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="container">
+      <div class="hero-content">
+        <h1 class="hero-title">Coleção Exclusiva</h1>
+        <p class="hero-subtitle">Lingerie premium com elegância e conforto</p>
+        <button class="cta-button">Explorar Coleção</button>
+      </div>
+    </div>
+  </section>
 
-  <div class="products">
-    <div *ngFor="let product of products()">
-      <app-product-card [product]="product"></app-product-card>
+  <!-- Admin Panel (Temporary) -->
+  <section class="admin-panel">
+    <div class="container">
+      <div class="upload-form">
+        <h2>Adicionar Produto</h2>
+        <div class="form-group">
+          <label>Imagem do Produto</label>
+          <input type="file" (change)="onFileSelected($event)" accept="image/*" class="file-input">
+        </div>
+        <div class="form-group">
+          <label>Descrição</label>
+          <textarea 
+            [(ngModel)]="tempDescription" 
+            placeholder="Digite a descrição do produto..."
+            class="description-input"
+          ></textarea>
+        </div>
+        <button (click)="addProduct()" class="add-product-btn">
+          <i class="icon-plus"></i>
+          Adicionar Produto
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Products Section -->
+  <section class="products-section">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Nossos Produtos</h2>
+        <p class="section-subtitle">Descubra nossa coleção exclusiva de lingerie premium</p>
+      </div>
+
+      @if (products().length > 0) {
+        <div class="products-grid">
+          @for (product of products(); track product.id) {
+            <app-product-card [product]="product"></app-product-card>
+          }
+        </div>
+      } @else {
+        <div class="empty-state">
+          <div class="empty-icon">👗</div>
+          <h3>Nenhum produto encontrado</h3>
+          <p>Adicione alguns produtos para começar a vender!</p>
+        </div>
+      }
+    </div>
+  </section>
+</main>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>Salvatt Lingerie</h3>
+        <p>Elegância e conforto em cada peça</p>
+      </div>
+      <div class="footer-section">
+        <h4>Atendimento</h4>
+        <p>📞 (22) 2527-2946</p>
+        <p>📱 WhatsApp: (22) 2527-2946</p>
+      </div>
+      <div class="footer-section">
+        <h4>Horário</h4>
+        <p>Segunda a Sexta: 9h às 18h</p>
+        <p>Sábado: 9h às 14h</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 Salvatt Lingerie. Todos os direitos reservados.</p>
     </div>
   </div>
-</div>
+</footer>
 
 <router-outlet></router-outlet>
