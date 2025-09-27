@@ -16,7 +16,7 @@ publish = "/home/joao-marcelo/Documents/E-commerce-angular/salvatt/dist/salvatt/
 publishOrigin = "config"
 commandOrigin = "config"
 base = "/home/joao-marcelo/Documents/E-commerce-angular/salvatt"
-command = "ng build"
+command = "npx ng build"
 
 [build.environment]
 
