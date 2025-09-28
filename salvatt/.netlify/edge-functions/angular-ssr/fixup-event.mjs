@@ -1,3 +1,0 @@
-
-  globalThis.Event = globalThis.DenoEvent
-  
