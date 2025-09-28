@@ -26,7 +26,11 @@ export function validateQuery<T>(schema: ZodSchema<T>) {
     if (!result.success) {
       return next(new HttpError(400, JSON.stringify({ errors: formatIssues(result.error.issues) })));
     }
-    req.query = result.data as any;
+    const currentQuery = req.query as Record<string, unknown>;
+    for (const key of Object.keys(currentQuery)) {
+      delete currentQuery[key];
+    }
+    Object.assign(currentQuery, result.data);
     next();
   };
 }

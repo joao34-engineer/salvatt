@@ -45,3 +45,21 @@ export async function getCurrentUser(userId: string) {
   if (!user) throw new HttpError(404, 'User not found');
   return user;
 }
+
+export function generateToken(userId: string) {
+  // Get user data for token payload
+  return prisma.user.findUnique({
+    where: { id: userId },
+    select: { id: true, email: true, name: true, role: true }
+  }).then(user => {
+    if (!user) throw new HttpError(404, 'User not found');
+    
+    const payload: Express.UserPayload = { 
+      id: user.id, 
+      email: user.email, 
+      role: user.role, 
+      name: user.name 
+    };
+    return signJwt(payload);
+  });
+}

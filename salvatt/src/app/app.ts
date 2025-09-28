@@ -1,51 +1,19 @@
-import { Component, signal } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { FormsModule } from '@angular/forms';
-import { ProductCardComponent } from './components/product-card/product-card.component';
-import { HeaderComponent } from './components/header/header.component';
-import { Product } from './models/product';
+import { AuthService } from './services/auth.service';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, ProductCardComponent, HeaderComponent, FormsModule],
+  imports: [RouterOutlet],
   templateUrl: './app.html',
   styleUrls: ['./app.css']
 })
-export class App {
-  protected readonly title = signal('salvatt');
+export class App implements OnInit {
+  protected readonly title = 'salvatt';
 
-  products = signal<Product[]>([]);
+  private readonly authService = inject(AuthService);
 
-  tempImageUrl = signal<string>('');
-  tempDescription = '';
-
-  onFileSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files[0]) {
-      const file = input.files[0];
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.tempImageUrl.set(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  }
-
-  addProduct(): void {
-    if (this.tempImageUrl() && this.tempDescription) {
-      const newProduct: Product = {
-        id: Date.now().toString(),
-        name: 'Lingerie Item',
-        description: this.tempDescription,
-        imageUrl: this.tempImageUrl(),
-        price: 89.90,
-        inStock: true,
-        sizes: ['P', 'M', 'G', 'GG'],
-        colors: ['#FF69B4', '#8B008B', '#000000', '#FFFFFF']
-      };
-      this.products.update(products => [...products, newProduct]);
-      this.tempImageUrl.set('');
-      this.tempDescription = '';
-    }
+  ngOnInit(): void {
+    this.authService.initialize();
   }
 }

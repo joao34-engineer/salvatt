@@ -25,6 +25,7 @@ model User {
   password  String
   name      String?
   role      Role     @default(CUSTOMER)
+  googleId  String?  @unique // For Google OAuth users
 
   // Relations
   orders    Order[]

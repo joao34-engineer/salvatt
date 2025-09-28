@@ -15,7 +15,7 @@ export const createProductSchema = z.object({
   name: z.string().min(1).max(200),
   description: z.string().max(5000).optional(),
   price: z.coerce.number().positive(),
-  imageUrl: z.string().url().optional(),
+  imageUrl: z.string().optional(), // Allow any string (URLs or data URLs)
   stock: z.coerce.number().int().min(0).default(0),
   categoryId: z.string().uuid(),
 });

@@ -1,7 +1,8 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-header',
@@ -22,8 +23,8 @@ import { FormsModule } from '@angular/forms';
 
             <!-- Search Bar -->
             <div class="search-bar">
-              <input 
-                type="text" 
+              <input
+                type="text"
                 placeholder="Buscar produtos..."
                 [(ngModel)]="searchQuery"
                 (keyup.enter)="search()"
@@ -33,16 +34,26 @@ import { FormsModule } from '@angular/forms';
               </button>
             </div>
 
-            <!-- Cart -->
-            <div class="cart">
-              <a routerLink="/cart" class="cart-link">
-                <i class="icon-cart"></i>
-                <span class="cart-count">{{ cartItemCount() }}</span>
-                <div class="cart-info">
-                  <span class="cart-text">Meu Carrinho</span>
-                  <span class="cart-total">R$ {{ cartTotal() | currency:'BRL':'symbol':'1.2-2' }}</span>
+            <!-- User Actions -->
+            <div class="user-actions">
+              @if (authService.loading()) {
+                <div class="loading-auth">
+                  <span class="loading-spinner"></span>
+                  <span>Carregando...</span>
                 </div>
-              </a>
+              } @else if (authService.isAuthenticated()) {
+                <div class="user-menu">
+                  <span class="user-name">{{ authService.user()?.name || authService.user()?.email }}</span>
+                  <button (click)="logout()" class="logout-btn">Sair</button>
+                </div>
+              } @else {
+                <a routerLink="/login" class="login-btn">Entrar</a>
+              }
+
+              <!-- Admin Link -->
+              @if (authService.isAdmin()) {
+                <a routerLink="/admin/add-product" class="admin-link">Admin</a>
+              }
             </div>
           </div>
         </div>
@@ -62,7 +73,7 @@ import { FormsModule } from '@angular/forms';
                 <a routerLink="/category/sutia-amamentacao">Amamentação</a>
               </div>
             </li>
-            
+
             <li class="nav-item dropdown">
               <a href="#" class="nav-link">Conjunto</a>
               <div class="dropdown-menu">
@@ -118,11 +129,8 @@ import { FormsModule } from '@angular/forms';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent {
-  isLoggedIn = signal(false);
-  userName = signal('');
+  readonly authService = inject(AuthService);
   searchQuery = '';
-  cartItemCount = signal(0);
-  cartTotal = signal(0);
 
   search(): void {
     if (this.searchQuery.trim()) {
@@ -132,8 +140,6 @@ export class HeaderComponent {
   }
 
   logout(): void {
-    this.isLoggedIn.set(false);
-    this.userName.set('');
-    // Implement logout logic
+    this.authService.logout();
   }
 }
