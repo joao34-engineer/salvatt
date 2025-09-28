@@ -12,6 +12,7 @@ declare global {
     interface Request {
       user?: UserPayload;
     }
+    interface User extends UserPayload {}
   }
 }
 
