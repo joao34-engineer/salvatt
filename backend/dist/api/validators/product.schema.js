@@ -15,7 +15,7 @@ exports.createProductSchema = zod_1.z.object({
     name: zod_1.z.string().min(1).max(200),
     description: zod_1.z.string().max(5000).optional(),
     price: zod_1.z.coerce.number().positive(),
-    imageUrl: zod_1.z.string().url().optional(),
+    imageUrl: zod_1.z.string().optional(), // Allow any string (URLs or data URLs)
     stock: zod_1.z.coerce.number().int().min(0).default(0),
     categoryId: zod_1.z.string().uuid(),
 });

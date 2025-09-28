@@ -5,6 +5,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.registerUser = registerUser;
 exports.loginUser = loginUser;
 exports.getCurrentUser = getCurrentUser;
+exports.generateToken = generateToken;
 const prisma_1 = require("../../config/prisma");
 const httpError_1 = require("../../utils/httpError");
 const password_1 = require("../../utils/password");
@@ -45,5 +46,22 @@ async function getCurrentUser(userId) {
     if (!user)
         throw new httpError_1.HttpError(404, 'User not found');
     return user;
+}
+function generateToken(userId) {
+    // Get user data for token payload
+    return prisma_1.prisma.user.findUnique({
+        where: { id: userId },
+        select: { id: true, email: true, name: true, role: true }
+    }).then(user => {
+        if (!user)
+            throw new httpError_1.HttpError(404, 'User not found');
+        const payload = {
+            id: user.id,
+            email: user.email,
+            role: user.role,
+            name: user.name
+        };
+        return (0, jwt_1.signJwt)(payload);
+    });
 }
 //# sourceMappingURL=auth.service.js.map

@@ -42,6 +42,10 @@ const auth_1 = require("../../middlewares/auth");
 const router = (0, express_1.Router)();
 router.post('/register', (0, validate_1.validateBody)(auth_schema_1.registerSchema), authController.register);
 router.post('/login', (0, validate_1.validateBody)(auth_schema_1.loginSchema), authController.login);
+// Initiates OAuth login with Google. Frontend should redirect user here.
+router.get('/google', authController.googleAuthRedirect);
+// Handles Google's callback exchange and returns JWT.
+router.get('/google/callback', authController.googleCallback);
 router.get('/me', auth_1.authenticate, authController.me);
 exports.default = router;
 //# sourceMappingURL=auth.js.map

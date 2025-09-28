@@ -25,7 +25,11 @@ function validateQuery(schema) {
         if (!result.success) {
             return next(new httpError_1.HttpError(400, JSON.stringify({ errors: formatIssues(result.error.issues) })));
         }
-        req.query = result.data;
+        const currentQuery = req.query;
+        for (const key of Object.keys(currentQuery)) {
+            delete currentQuery[key];
+        }
+        Object.assign(currentQuery, result.data);
         next();
     };
 }

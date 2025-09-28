@@ -1,4 +1,5 @@
 // src/app.ts
+import './types/express'; // Ensure Express type extensions are loaded
 import express from 'express';
 import cors from 'cors';
 import path from 'path';
