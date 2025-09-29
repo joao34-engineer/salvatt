@@ -40,6 +40,9 @@ const validate_1 = require("../../middlewares/validate");
 const auth_schema_1 = require("../validators/auth.schema");
 const auth_1 = require("../../middlewares/auth");
 const router = (0, express_1.Router)();
+router.get('/health', (_req, res) => {
+    res.json({ status: 'auth_ok' });
+});
 router.post('/register', (0, validate_1.validateBody)(auth_schema_1.registerSchema), authController.register);
 router.post('/login', (0, validate_1.validateBody)(auth_schema_1.loginSchema), authController.login);
 // Initiates OAuth login with Google. Frontend should redirect user here.
