@@ -4,7 +4,6 @@ import cors from 'cors';
 import path from 'path';
 import fs from 'fs';
 import swaggerUi from 'swagger-ui-express';
-import passport from './config/passport';
 import { notFoundHandler, errorHandler } from './middlewares/errorHandler';
 import { env } from './config/env';
 import apiRoutes from './api/routes';
@@ -21,9 +20,6 @@ app.use(
 
 // Body parsing
 app.use(express.json());
-
-// Initialize Passport
-app.use(passport.initialize());
 
 // Swagger UI
 const openapiFile = path.resolve(process.cwd(), 'openapi', 'openapi.json');

@@ -1,12 +1,11 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, NavigationEnd, Router } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { ProductCardComponent } from '../../components/product-card/product-card.component';
 import { HeaderComponent } from '../../components/header/header.component';
 import { ProductService } from '../../services/product.service';
 import { AuthService } from '../../services/auth.service';
 import { Product } from '../../models/product';
-import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-home',
@@ -112,7 +111,6 @@ import { filter } from 'rxjs/operators';
 export class HomeComponent implements OnInit {
   readonly authService = inject(AuthService);
   private readonly productService = inject(ProductService);
-  private readonly router = inject(Router);
 
   products = signal<Product[]>([]);
   loading = signal<boolean>(false);
@@ -120,15 +118,6 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadProducts();
-    
-    // Listen for navigation events to refresh products when returning from add-product
-    this.router.events
-      .pipe(filter(event => event instanceof NavigationEnd))
-      .subscribe((event: NavigationEnd) => {
-        if (event.url === '/' || event.url === '/home') {
-          this.loadProducts();
-        }
-      });
   }
 
   loadProducts(): void {
@@ -139,8 +128,7 @@ export class HomeComponent implements OnInit {
         this.products.set(items);
         this.loading.set(false);
       },
-      error: (err) => {
-        console.error('Failed to load products', err);
+      error: () => {
         this.error.set('Falha ao carregar produtos. Tente novamente.');
         this.loading.set(false);
       },
@@ -148,22 +136,18 @@ export class HomeComponent implements OnInit {
   }
 
   onProductDelete(productId: string): void {
-    console.log('Deleting product:', productId);
     this.productService.delete(productId).subscribe({
       next: () => {
-        console.log('Product deleted successfully');
         // Remove product from list
         this.products.update(products => products.filter(p => p.id !== productId));
       },
-      error: (err) => {
-        console.error('Failed to delete product', err);
-        alert('Erro ao deletar produto. Tente novamente.');
+      error: () => {
+        this.error.set('Erro ao deletar produto. Tente novamente.');
       },
     });
   }
 
   onProductEdit(productId: string): void {
-    console.log('Editing product:', productId);
     // Navigation is handled in the product-card component
   }
 }

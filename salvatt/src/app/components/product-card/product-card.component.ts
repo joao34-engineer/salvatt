@@ -23,21 +23,6 @@ import { AuthService } from '../../services/auth.service';
             <span>Sem imagem</span>
           </div>
         }
-        
-        <!-- Favorite Button -->
-        <button 
-          class="favorite-btn" 
-          [class.active]="isFavorited()"
-          (click)="toggleFavorite()"
-          title="Adicionar aos favoritos"
-        >
-          <i class="icon-heart" [class.active]="isFavorited()"></i>
-        </button>
-
-        <!-- Quick View Button -->
-        <button class="quick-view-btn" (click)="quickView()" title="Visualização rápida">
-          <i class="icon-eye"></i>
-        </button>
 
         <!-- Admin Actions - Only visible for admins -->
         @if (authService.isAdmin()) {
@@ -51,76 +36,25 @@ import { AuthService } from '../../services/auth.service';
           </div>
         }
 
-        <!-- Sale Badge -->
-        @if (salePrice() !== null) {
-          <div class="sale-badge">
-            {{ getSalePercentage() }}% OFF
-          </div>
-        }
       </div>
 
       <div class="product-info">
         <h3 class="product-name">{{ product().name }}</h3>
         <p class="product-description">{{ product().description }}</p>
-        
-        <!-- Sizes -->
-        @if (productSizes().length > 0) {
-          <div class="sizes">
-            <span class="sizes-label">Tamanhos:</span>
-            @for (size of productSizes(); track size) {
-              <span class="size-tag">{{ size }}</span>
-            }
-          </div>
-        }
 
-        <!-- Colors -->
-        @if (productColors().length > 0) {
-          <div class="colors">
-            <span class="colors-label">Cores:</span>
-            <div class="color-options">
-              @for (color of productColors(); track color) {
-                <div 
-                  class="color-dot" 
-                  [style.background-color]="color"
-                  [title]="color"
-                ></div>
-              }
-            </div>
-          </div>
-        }
-
-        <!-- Price - Fixed currency display -->
+        <!-- Price -->
         <div class="price-section">
-          @if (salePrice() !== null) {
-            <span class="original-price">{{ product().price | currency:'BRL':'symbol':'1.2-2' }}</span>
-            <span class="sale-price">{{ (salePrice() ?? product().price) | currency:'BRL':'symbol':'1.2-2' }}</span>
-          } @else {
-            <span class="current-price">{{ product().price | currency:'BRL':'symbol':'1.2-2' }}</span>
-          }
+          <span class="current-price">{{ product().price | currency:'BRL':'symbol':'1.2-2' }}</span>
         </div>
 
-        <!-- Add to Cart Button -->
-        <button 
-          class="add-to-cart-btn" 
-          (click)="addToCart()"
-          [disabled]="!product().inStock || addingToCart()"
-          [class.adding]="addingToCart()"
-          [class.added]="addedToCart()"
-        >
-          @if (!product().inStock) {
-            <i class="icon-out-of-stock"></i>
-            Produto Esgotado
-          } @else if (addingToCart()) {
-            <i class="icon-loading"></i>
-            Adicionando...
-          } @else if (addedToCart()) {
-            <i class="icon-check"></i>
-            Adicionado!
+        <!-- Stock Status -->
+        <div class="stock-status">
+          @if (product().inStock) {
+            <span class="in-stock">✓ Em estoque</span>
           } @else {
-            <i class="icon-cart"></i>
-            Adicionar ao Carrinho
+            <span class="out-of-stock">✗ Produto esgotado</span>
           }
-        </button>
+        </div>
       </div>
     </div>
 
@@ -154,54 +88,7 @@ export class ProductCardComponent {
   readonly authService = inject(AuthService);
   private readonly router = inject(Router);
   
-  isFavorited = signal(false);
   showDeleteConfirm = signal(false);
-  addedToCart = signal(false);
-  addingToCart = signal(false);
-  
-  protected readonly salePrice = computed<number | null>(() => {
-    const currentProduct = this.product();
-    const { salePrice, price } = currentProduct;
-    if (salePrice === undefined || salePrice >= price) {
-      return null;
-    }
-    return salePrice;
-  });
-  
-  protected readonly productSizes = computed(() => this.product().sizes ?? []);
-  protected readonly productColors = computed(() => this.product().colors ?? []);
-
-  toggleFavorite(): void {
-    this.isFavorited.update(current => !current);
-    console.log('Toggled favorite for:', this.product().name);
-  }
-
-  quickView(): void {
-    console.log('Quick view for:', this.product().name);
-  }
-
-  addToCart(): void {
-    if (!this.product().inStock || this.addingToCart()) {
-      return;
-    }
-    
-    this.addingToCart.set(true);
-    
-    // Simulate API call delay
-    setTimeout(() => {
-      // Here you would normally call a cart service
-      // For now, we'll just show success feedback
-      console.log('Added to cart:', this.product().name);
-      
-      this.addingToCart.set(false);
-      this.addedToCart.set(true);
-      
-      // Reset the success state after 2 seconds
-      setTimeout(() => {
-        this.addedToCart.set(false);
-      }, 2000);
-    }, 500);
-  }
 
   editProduct(): void {
     this.onEdit.emit(this.product().id);
@@ -220,16 +107,5 @@ export class ProductCardComponent {
 
   cancelDelete(): void {
     this.showDeleteConfirm.set(false);
-  }
-
-
-
-  getSalePercentage(): number {
-    const salePrice = this.salePrice();
-    if (salePrice === null) {
-      return 0;
-    }
-    const { price } = this.product();
-    return Math.round(((price - salePrice) / price) * 100);
   }
 }

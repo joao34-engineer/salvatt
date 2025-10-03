@@ -9,7 +9,6 @@ const cors_1 = __importDefault(require("cors"));
 const path_1 = __importDefault(require("path"));
 const fs_1 = __importDefault(require("fs"));
 const swagger_ui_express_1 = __importDefault(require("swagger-ui-express"));
-const passport_1 = __importDefault(require("./config/passport"));
 const errorHandler_1 = require("./middlewares/errorHandler");
 const env_1 = require("./config/env");
 const routes_1 = __importDefault(require("./api/routes"));
@@ -21,8 +20,6 @@ app.use((0, cors_1.default)({
 }));
 // Body parsing
 app.use(express_1.default.json());
-// Initialize Passport
-app.use(passport_1.default.initialize());
 // Swagger UI
 const openapiFile = path_1.default.resolve(process.cwd(), 'openapi', 'openapi.json');
 if (fs_1.default.existsSync(openapiFile)) {

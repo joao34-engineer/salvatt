@@ -34,15 +34,10 @@ var __importStar = (this && this.__importStar) || (function () {
         return result;
     };
 })();
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.me = exports.googleCallback = exports.googleAuthRedirect = exports.login = exports.register = void 0;
+exports.me = exports.login = exports.register = void 0;
 const asyncHandler_1 = require("../../utils/asyncHandler");
 const authService = __importStar(require("../services/auth.service"));
-const passport_1 = __importDefault(require("../../config/passport"));
-const env_1 = require("../../config/env");
 exports.register = (0, asyncHandler_1.asyncHandler)(async (req, res) => {
     const user = await authService.registerUser(req.body);
     res.status(201).json(user);
@@ -51,41 +46,8 @@ exports.login = (0, asyncHandler_1.asyncHandler)(async (req, res) => {
     const { token, user } = await authService.loginUser(req.body);
     res.json({ token, user });
 });
-exports.googleAuthRedirect = (0, asyncHandler_1.asyncHandler)(async (req, res) => {
-    // Check if Google OAuth is configured
-    if (!env_1.env.GOOGLE_CLIENT_ID || !env_1.env.GOOGLE_CLIENT_SECRET) {
-        return res.status(501).json({
-            message: 'Google OAuth is not configured. Please set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET environment variables.',
-            setup_guide: 'See GOOGLE_OAUTH_SETUP.md for detailed setup instructions'
-        });
-    }
-    // Initiate Google OAuth flow
-    passport_1.default.authenticate('google', {
-        scope: ['profile', 'email']
-    })(req, res);
-});
-exports.googleCallback = (0, asyncHandler_1.asyncHandler)(async (req, res) => {
-    // Handle Google OAuth callback
-    passport_1.default.authenticate('google', { session: false }, async (err, user) => {
-        if (err) {
-            console.error('Google OAuth error:', err);
-            return res.redirect(`${env_1.env.FRONTEND_URL}/auth/callback?error=oauth_error`);
-        }
-        if (!user) {
-            return res.redirect(`${env_1.env.FRONTEND_URL}/auth/callback?error=no_user`);
-        }
-        try {
-            // Generate JWT token for the user
-            const token = await authService.generateToken(user.id);
-            // Redirect to frontend with token
-            res.redirect(`${env_1.env.FRONTEND_URL}/auth/callback?token=${token}`);
-        }
-        catch (error) {
-            console.error('Token generation error:', error);
-            res.redirect(`${env_1.env.FRONTEND_URL}/auth/callback?error=token_error`);
-        }
-    })(req, res);
-});
+// Note: Google OAuth functionality has been removed for simplification
+// You can implement OAuth directly without Passport if needed
 exports.me = (0, asyncHandler_1.asyncHandler)(async (req, res) => {
     const current = await authService.getCurrentUser(req.user.id);
     res.json(current);
