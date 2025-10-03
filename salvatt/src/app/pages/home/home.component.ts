@@ -86,8 +86,6 @@ import { Product } from '../../models/product';
             <p>Elegância e conforto em cada peça</p>
           </div>
           <div class="footer-section">
-            <h4>Atendimento</h4>
-            <p>📞 (22) 2527-2946</p>
             <p>
               <a href="https://wa.me/5521991324587" target="_blank" rel="noopener noreferrer" class="whatsapp-link">
                 <span class="whatsapp-icon">📱</span> WhatsApp: (21) 99132-4587
