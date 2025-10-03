@@ -18,8 +18,9 @@ app.use(
   })
 );
 
-// Body parsing
-app.use(express.json());
+// Body parsing with increased limits to support base64 image uploads
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Swagger UI
 const openapiFile = path.resolve(process.cwd(), 'openapi', 'openapi.json');

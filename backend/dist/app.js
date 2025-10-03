@@ -18,8 +18,9 @@ app.use((0, cors_1.default)({
     origin: env_1.env.CORS_ORIGIN || '*',
     credentials: true,
 }));
-// Body parsing
-app.use(express_1.default.json());
+// Body parsing with increased limits to support base64 image uploads
+app.use(express_1.default.json({ limit: '10mb' }));
+app.use(express_1.default.urlencoded({ extended: true, limit: '10mb' }));
 // Swagger UI
 const openapiFile = path_1.default.resolve(process.cwd(), 'openapi', 'openapi.json');
 if (fs_1.default.existsSync(openapiFile)) {
